@@ -1,6 +1,10 @@
-const {Character} = require('./character');
-const {Enemy} = require('./enemy');
-const {Food} = require('./food');
+const { Character } = require('./character');
+const { Enemy } = require('./enemy');
+const { Food } = require('./food');
+const {Room} = require('./room');
+const {Item} = require('./item')
+
+const { World } = require('./world');
 
 class Player extends Character {
 
@@ -27,7 +31,7 @@ class Player extends Character {
       console.log(`${this.name} is not carrying anything.`);
     } else {
       console.log(`${this.name} is carrying:`);
-      for (let i = 0 ; i < this.items.length ; i++) {
+      for (let i = 0; i < this.items.length; i++) {
         console.log(`  ${this.items[i].name}`);
       }
     }
@@ -36,39 +40,100 @@ class Player extends Character {
   takeItem(itemName) {
 
     // Fill this in
+    let item = this.currentRoom.getItemByName(itemName);
+    let index = this.currentRoom.items.indexOf(item);
+
+    if (index !== -1) {
+      this.currentRoom.items.splice(index, 1);
+      this.items.push(item);
+    }
 
   }
 
   dropItem(itemName) {
 
     // Fill this in
+    let item = this.getItemByName(itemName);
+    let index = this.items.indexOf(item);
 
+    if (index !== -1) {
+      this.items.splice(index, 1);
+      this.currentRoom.items.push(item);
+    }
   }
 
   eatItem(itemName) {
-
     // Fill this in
+    let item = this.getItemByName(itemName);
+    let index = this.items.indexOf(item);
+
+    if (item instanceof Food) {
+      if (index !== -1) {
+        this.items.splice(index, 1);
+      }
+    }
 
   }
 
   getItemByName(name) {
 
     // Fill this in
-
+    for (let item of this.items) {
+      if (item.name === name) return item;
+    }
   }
 
   hit(name) {
 
     // Fill this in
-
+    let enemyinRoom = this.currentRoom.getEnemyByName(name)
+    enemyinRoom.attackTarget = this;
+    // console.log(enemyinRoom);
   }
-
+  
   die() {
     console.log("You are dead!");
     process.exit();
   }
 
 }
+
+let room = new Room("Test Room", "A test room");
+let item = new Item("rock", "just a simple rock");
+let sandwich = new Food("sandwich", "a delicious looking sandwich");
+let enemy = new Enemy('enemy', 'an ordinary character', room);
+let player = new Player("player", room);
+
+// console.log(World.enemies, 'WOOOO')
+World.enemies.push(enemy);
+// console.log(World.enemies[0].setPlayer, 'ADD')
+World.setPlayer(player);
+
+enemy.items.push(item);
+room.items.push(sandwich);
+
+// console.log(enemy.player);
+
+let westRoom = new Room("West Room", "A room to the west of testRoom");
+room.connectRooms('w', westRoom);
+
+enemy.cooldown = 0;
+
+// console.log(player, 'YYY')
+// console.log(player.currentRoom);
+// console.log(enemy.currentRoom); //=> room
+// enemy.randomMove();
+// console.log(enemy.currentRoom); //=> west room
+// console.log(enemy.cooldown) //=> >0
+
+// console.log(room.getEnemyByName('enemy'));
+player.hit('enemy');
+
+enemy.cooldown = 0;
+
+enemy.attack();
+console.log(player.health)
+console.log(enemy.cooldown)
 
 module.exports = {
   Player,

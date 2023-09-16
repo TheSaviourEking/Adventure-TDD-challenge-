@@ -7,6 +7,8 @@ class Item {
 
 }
 
+// let item = new Item("rock", "just a simple rock");
+// console.log(item)
 module.exports = {
   Item,
 };
