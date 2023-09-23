@@ -132,8 +132,11 @@ player.hit('enemy');
 enemy.cooldown = 0;
 
 enemy.attack();
-console.log(player.health)
-console.log(enemy.cooldown)
+// console.log(player.health)
+// console.log(enemy.cooldown)
+
+enemy.takeSandwich();
+// console.log(enemy)
 
 module.exports = {
   Player,

@@ -31,6 +31,13 @@ class Enemy extends Character {
 
   takeSandwich() {
     // Fill this in
+    let sandwich = this.currentRoom.getItemByName('sandwich');
+    let index = this.currentRoom.items.indexOf(sandwich);
+
+    if (index !== -1) {
+      this.currentRoom.items.splice(index, 1);
+      this.items.push(sandwich);
+    }
   }
 
   // Print the alert only if player is standing in the same room
@@ -41,12 +48,13 @@ class Enemy extends Character {
   }
 
   rest() {
+    this.cooldown += 3000;
     // Wait until cooldown expires, then act
     const resetCooldown = function () {
       this.cooldown = 0;
       this.act();
     };
-    setTimeout(resetCooldown, this.cooldown);
+    setTimeout(resetCooldown.bind(this), this.cooldown);
   }
 
   attack() {
@@ -57,6 +65,7 @@ class Enemy extends Character {
 
   applyDamage(amount) {
     // Fill this in
+    this.attackTarget.health -= amount;
   }
 
 
@@ -64,6 +73,7 @@ class Enemy extends Character {
   act() {
     if (this.health <= 0) {
       // Dead, do nothing;
+      this.die();
     } else if (this.cooldown > 0) {
       this.rest();
     } else {
@@ -79,7 +89,7 @@ class Enemy extends Character {
     this.cooldown += 1000;
 
     this.alert(`${this.name} scratches its nose`);
-
+    this.rest()
   }
 
 
